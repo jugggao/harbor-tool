@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+import argparse
+
+from harbor_tool import Harbor
+
+
+def harbor_cli():
+    harbor_parser = argparse.ArgumentParser(
+        description='Harbor 管理工具',
+    )
+
+    common_group = harbor_parser.add_argument_group('通用选项')
+    common_group.add_argument('--host', action="store", help='主机名', required=True)
+    common_group.add_argument('--user', '-u', action="store", metavar='USER', help='用户名', required=True)
+    common_group.add_argument('--password', '-p', action="store", metavar='PASSWORD', help='密码', required=True)
+
+    harbor_subparsers = harbor_parser.add_subparsers(title='子命令', metavar='')
+
+    # Project list
+    project_list_parser = harbor_subparsers.add_parser(
+        'project-list',
+        help='项目列表')
+    project_list_parser.set_defaults(handle=handle_project_list)
+
+    # Image list
+    image_list_parser = harbor_subparsers.add_parser(
+        'image-list',
+        help='镜像列表')
+    image_list_parser.add_argument(
+        '--repo', '-r',
+        action="store", help='镜像仓库名称',
+        metavar='REPO', required=True)
+    image_list_parser.set_defaults(handle=handle_image_list)
+
+    # Image Retag
+    image_retag_parser = harbor_subparsers.add_parser(
+        'image-retag',
+        help='重定向镜像')
+    image_retag_parser.add_argument(
+        '--src',
+        action="store", help='源镜像',
+        metavar='IMAGE', required=True
+    )
+    image_retag_parser.add_argument(
+        '--dst',
+        action="store", help='目的镜像',
+        metavar='IMAGE', required=True
+    )
+    image_retag_parser.set_defaults(handle=handle_image_retag)
+
+    harbor_parser.add_argument('--version', '-v', action="version", version="%(prog)s 1.9.3" )
+
+    harbor = Harbor()
+
+    args = harbor_parser.parse_args()
+    if hasattr(args, 'handle'):
+        args.handle(harbor, args)
+    else:
+        harbor_parser.print_help()
+
+
+def handle_project_list(harbor, args):
+    harbor.project_list(args.host, args.user, args.password)
+
+
+def handle_image_list(harbor, args):
+    harbor.image_list(args.host, args.user, args.password, args.repo)
+
+
+def handle_image_retag(harbor, args):
+    harbor.image_retag(args.host, args.user, args.password, args.src, args.dst)
+
+
+if __name__ == "__main__":
+
+    harbor_cli()
