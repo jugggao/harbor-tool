@@ -18,7 +18,7 @@ optional arguments:
   --password PASSWORD, -p PASSWORD 密码
 
 子命令:
-  
+
     project-list        项目列表
     image-list          镜像列表
     image-retag         重定向镜像

@@ -63,14 +63,3 @@ class Harbor:
             data=data_json,
             auth=(user, password))
         return r_post.status_code
-
-if __name__ == "__main__":
-    url = 'harbor.ambow.com'
-    user = 'admin'
-    password = 'Ambow99999999'
-    repo = 'test/web-demo'
-    src = 'test/web-demo:1.0.0'
-    dst = 'web/web-demo:2.0.0'
-    harbor = Harbor()
-    # harbor.project_list(url, user, password)
-    harbor.image_retag(url, user, password, src, dst)
